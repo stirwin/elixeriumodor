@@ -1,16 +1,25 @@
 import AddToBasketButton from "@/components/productos/AddToBasketButton";
-import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/formatPrice";
 import { imageUrl } from "@/lib/imageUrl";
 import { getProductBySlug } from "@/sanity/lib/products/getProductBySlug";
 import { PortableText } from "next-sanity";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+
+export const dynamic = "force-static";
+export const revalidate = 60;
+
+
+
 async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
 
     const { slug } = await params;
 
     const product = await getProductBySlug(slug);
+    
+    console.log( crypto.randomUUID().slice(0, 5) +
+    `referencia el productor page cache con ${slug}`);
 
     if (!product) {
         notFound();
@@ -42,7 +51,7 @@ async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
                     <div>
                         <h1 className="text-4xl font-bold">{product.name}</h1>
                         <div className="text-xl font-semibold mb-4">
-                            ${product.price?.toFixed(2)}
+                            {formatPrice(product.price || 0)}
                         </div>
                         <div className="prose max-w-none mb-4">
                             {Array.isArray(product.description) && (

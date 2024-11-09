@@ -3,25 +3,17 @@
 import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import useBasketStore from "../../../../store/store"
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import AddToBasketButton from "@/components/productos/AddToBasketButton";
-import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { imageUrl } from "@/lib/imageUrl";
 import Loader from "@/components/Loader";
 import { createCheckoutSession, Metadata } from "../../../../actions/createCheckoutSession";
+import { formatPrice } from "@/lib/formatPrice";
 
-const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-CO', {
-        style: 'currency',
-        currency: 'COP',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-        // Multiplicamos por 1000 para convertir a miles
-        }).format(price * 1000);
-};
 
-function basketPage() {
+
+function BasketPage() {
 
     const groupItems = useBasketStore((state) => state.getGroupedItems());
     const { isSignedIn } = useAuth();
@@ -147,4 +139,4 @@ function basketPage() {
     )
 }
 
-export default basketPage
+export default BasketPage

@@ -10,7 +10,7 @@ export const orderType = defineType({
         defineField({
             name: "numeroPedido",
             title: "Número de Pedido",
-            type: "number",
+            type: "string",
             validation: (Rule) => Rule.required(),
         }),
         defineField({
@@ -135,7 +135,11 @@ export const orderType = defineType({
             cantidad:"precioTotal",
         },
         prepare(select){
-            const orderIdSnippet = `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`;
+            // Asegurarnos de que orderId sea string antes de usar slice
+            const orderIdString = String(select.orderId);
+            const orderIdSnippet = orderIdString.length > 10 
+            ? `${orderIdString.slice(0, 5)}...${orderIdString.slice(-5)}`
+            : orderIdString
             return{
                 title: `${select.name}(${orderIdSnippet})`,
                 subtitle: `${select.cantidad} ${select.moneda}, ${select.email}`,

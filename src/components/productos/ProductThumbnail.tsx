@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Producto } from "../../../sanity.types";
 import Image from "next/image";
 import { imageUrl } from "@/lib/imageUrl";
+import { formatPrice } from "@/lib/formatPrice";
 
 
 function ProductThumbnail({ producto }: { producto: Producto }) {
@@ -39,7 +40,7 @@ function ProductThumbnail({ producto }: { producto: Producto }) {
                 .join("") || "No descripción disponible"}
                 </p>
                 <p className="mt-2 text-lg font-bold text-gray-900">
-                    ${producto.price?.toFixed(2)}
+                   {formatPrice(producto.price || 0)}
                 </p>
             
             </div>

@@ -60,7 +60,7 @@ export async function createCheckoutSession(
             line_items: items.map((item) => ({
                 price_data: {
                     currency: "COP",
-                    unit_amount: Math.round((item.producto.price! * 100000)),
+                    unit_amount: Math.round((item.producto.price! * 100)),
                     product_data: {
                         name: item.producto.name || "Producto sin nombre",
                         description: `Product ID: ${item.producto._id}`,

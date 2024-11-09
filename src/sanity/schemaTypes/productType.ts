@@ -1,5 +1,5 @@
 import { TrolleyIcon } from "@sanity/icons";
-import { defineField, defineType, Preview } from "sanity";
+import { defineField, defineType } from "sanity";
 
 export const productType = defineType({
     name: "producto",

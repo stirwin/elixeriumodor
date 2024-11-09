@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { ClerkLoaded, SignedIn, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";

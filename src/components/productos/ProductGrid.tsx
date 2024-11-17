@@ -3,23 +3,33 @@ import { Producto } from "../../../sanity.types";
 import { AnimatePresence, motion, } from "framer-motion";
 import ProductThumbnail from "./ProductThumbnail";
 
+interface ProductGridProps {
+    productos: Producto[];
+    maxProducts?: number;
+    gridCols?: 3 | 4;
+}
 
+function ProductGrid({ productos, maxProducts, gridCols = 3 }: ProductGridProps) {
+    const displayProducts = maxProducts ? productos.slice(0, maxProducts) : productos;
 
-function ProductGrid({ productos }: { productos: Producto[] }) {
+    const gridColsClass = gridCols === 4 
+        ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" 
+        : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-           {productos?.map((producto) => {
+        <div className={`mt-5 lg:col-span-3 grid ${gridColsClass} gap-6`}>
+           {displayProducts?.map((producto) => {
             return (
                 <AnimatePresence key={producto._id}>
                     <motion.div
-                    initial={{ opacity: 0.2 }}
-                    animate={{ opacity: 1}}
-                    exit={{ opacity: 0}}
-                   className="flex justify-center"
-                >
-                    <ProductThumbnail key={producto._id} producto={producto} />
-                </motion.div>
-            </AnimatePresence>
+                        initial={{ opacity: 0.2 }}
+                        animate={{ opacity: 1}}
+                        exit={{ opacity: 0}}
+                        className="flex justify-center"
+                    >
+                        <ProductThumbnail key={producto._id} producto={producto} />
+                    </motion.div>
+                </AnimatePresence>
            );
         })}
         </div>

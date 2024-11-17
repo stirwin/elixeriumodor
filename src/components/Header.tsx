@@ -3,92 +3,152 @@
 import { ClerkLoaded, SignedIn, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import Form from "next/form";
-import { PackageIcon, TrolleyIcon } from "@sanity/icons";
 import useBasketStore from "../../store/store";
+import { Button } from "./ui/button";
+import { Box, Search, ShoppingCart, User, X } from 'lucide-react';
+import { useState } from "react";
+import { CartModal } from './cart/CartModal'
+import { motion } from "framer-motion";
 
 function Header() {
+
+  
   const { user } = useUser();
 
   const itemCount = useBasketStore((state) =>
-    state.items.reduce((total, item)=> total + item.cantidad, 0)
+    state.items.reduce((total, item) => total + item.cantidad, 0)
   );
 
+  const [showSearch, setShowSearch] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const createClerkPasskey = async () => {
-    try {
-      const response = await user?.createPasskey();
-      console.log(response);
-      
-    } catch (error) {
-      console.log(error);
-    }
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  return (
-    <header className=" flex flex-wrap justify-between items-center px-4 py-2">
-      {/* top row*/}
-      <div className="flex w-full flex-wrap justify-between items-center">
-        <Link href="/" className="text-lg font-bold text-blue-500 hover:opacity-50 transition-opacity 
-        duration-300 cursor-pointer mx-auto sm:mx-0">
-        Shop
-        </Link>
-
-        <Form action='/search'
-        className="w-full sm:w-auto sm:flex-1 sm:mx-4 mt-2 sm:mt-0">
-          <input type="text" name="query" placeholder="Buscar productos..."
-          className="w-full rounded-md border-0 bg-white px-2 py-2 text-sm text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+  const HeaderContent = () => (
+    <>
+      {showSearch ? (
+        <Form action='/search' className="relative">
+          <input
+            type="text"
+            name="query"
+            placeholder="Buscar productos..."
+            className="w-full md:w-64 rounded-md border-0 bg-white px-2 py-2 text-sm text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+            autoFocus
+            onBlur={() => setShowSearch(false)}
           />
         </Form>
-
-        <div className="flex items-center space-x-4 mt-4 sm:mt-0 flex-1 sm:flex-none">
-          <Link href="/basket" className=" flex-1 relative flex justify-center sm:justify-start sm:flex-none items-center text-sm font-medium text-white bg-blue-500 rounded-md px-4 py-2 cursor-pointer">
-            <TrolleyIcon className="w-6 h-6" />
-            {/*recuento de elementos de span una vez que se agreguen productos*/}
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white
-            rounded-full w-5 h-5 flex items-center justify-center">
-              {itemCount}
-            </span>
-            <span>Mi carrito</span>
-          </Link>
-
-          {/*user icon*/}
-         
-          <ClerkLoaded> 
-            {/*si el usuario esta logueado*/}
-            <SignedIn>
-              <Link href="/orders"
-              className="flex-1 relative flex justify-center sm:justify-start sm:flex-none items-center text-sm font-medium text-white bg-blue-500 rounded-md px-4 py-2 cursor-pointer">
-                <PackageIcon className="w-6 h-6" />
-                <span>Mis ordenes</span>
-              </Link>
-           </SignedIn>
-
-            {/*si el usuario esta logueado*/}
-            {user ?(
-              <div>
-                <UserButton />
-                <div className="hidden sm:block text-xs">
-                  <p className="text-gray-400">Bienvenido de nuevo</p>
-                  <p className="text-gray-400">{user.fullName}</p>
-                </div>
-              </div>
-            ) : (
-              //si el usuario no esta logueado
-              <SignInButton mode="modal" />
-            )}
-
-            {user?.passkeys.length=== 0 && (
-              <button 
-              onClick={createClerkPasskey}
-              className="bg-white animate-pulse text-blue-500 font-bold
-              rounded-md px-4 py-2 cursor-pointer border">
-                <span>crear llave maestra</span>
-              </button>
-            )}
-          </ClerkLoaded>
+      ) : (
+        <Button
+          variant="ghost"
+          className="text-gray-700 hover:text-[#0E1D35] w-full justify-start"
+          onClick={() => setShowSearch(true)}
+        >
+          <Search className="w-5 h-5" />
+          <span className="ml-2">Search</span>
+        </Button>
+      )}
+      <Button variant="ghost" className="text-gray-700 hover:text-[#0E1D35] w-full justify-start" onClick={() => setIsCartOpen(true)}>
+        <div className="flex items-center">
+          <ShoppingCart className="w-5 h-5" />
+          <span className="ml-2">Cart ({itemCount})</span>
         </div>
-      </div>
-    </header>
+      </Button>
+      <ClerkLoaded>
+        <SignedIn>
+          <Button variant="ghost" className="text-gray-700 hover:text-[#0E1D35] w-full justify-start">
+            <Link href="/orders" className="flex items-center">
+              <Box className="w-5 h-5" />
+              <span className="ml-2">Ordenes</span>
+            </Link>
+          </Button>
+        </SignedIn>
+
+        {user ? (
+          <div className="w-full">
+            <Button variant="ghost" className="text-gray-700 hover:text-[#0E1D35] w-full justify-start">
+              <UserButton />
+              <span className="ml-2">{user.fullName}</span>
+            </Button>
+          </div>
+        ) : (
+          <Button variant="ghost" className="text-gray-700 hover:text-[#0E1D35] w-full justify-start">
+            <SignInButton mode="modal">
+              <div className="flex items-center">
+                <User className="w-5 h-5" />
+                <span className="ml-2">Ingresar</span>
+              </div>
+            </SignInButton>
+          </Button>
+        )}
+      </ClerkLoaded>
+
+    </>
+  );
+
+  return (
+    <>
+
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
+        className="w-full py-6 px-6 bg-white sticky top-0 z-50 border-b border-gray-100 opacity-90">
+       
+        <div className="max-w-7xl mx-auto flex items-center  justify-between">
+          <Link href="/" className="text-2xl font-bold text-[#0E1D35] text-nowrap">
+            ELI<span className="text-[#A2C2F4]">X</span>ERIUM OD<span className="text-[#A2C2F4]">O</span>R
+          </Link>
+          <Button variant="ghost" className="text-gray-700 hover:text-[#0E1D35] w-full justify-end sm:hidden block font-semibold" onClick={() => setIsCartOpen(true)}>
+            <div className="flex items-center">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="ml-2">Cart ({itemCount})</span>
+            </div>
+          </Button>
+          <button className="lg:hidden" onClick={toggleMobileMenu}>
+            <div className="space-y-2">
+              {isMobileMenuOpen ? (
+                <X className="w-8 h-8 text-gray-900" />
+              ) : (
+                <>
+                  <div className="w-8 h-0.5 bg-gray-900"></div>
+                  <div className="w-8 h-0.5 bg-gray-900"></div>
+                  <div className="w-8 h-0.5 bg-gray-900"></div>
+                </>
+              )}
+            </div>
+          </button>
+
+          <div className="hidden lg:flex items-center gap-8">
+            <HeaderContent />
+          </div>
+        </div>
+      </motion.header>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-white">
+          <div className="flex flex-col p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <Link href="/" className="text-2xl font-bold text-[#0E1D35]">
+                ELI<span className="text-[#A2C2F4]">X</span>ERIUM OD<span className="text-[#A2C2F4]">O</span>R
+              </Link>
+              <button onClick={toggleMobileMenu}>
+                <X className="w-8 h-8 text-gray-900" />
+              </button>
+            </div>
+            <HeaderContent  />
+          </div>
+        </div>
+      )}
+
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+      />
+    </>
   )
 }
 

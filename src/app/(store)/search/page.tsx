@@ -1,5 +1,6 @@
 import ProductGrid from "@/components/productos/ProductGrid";
 import { searchProductsByName } from "@/sanity/lib/products/getProductsByName";
+import { Producto } from "../../../../sanity.types";
 
 async function SearchPage({
     searchParams,
@@ -21,7 +22,7 @@ async function SearchPage({
     return (
         <div>
             <h1>Resultados de la busqueda: {query}</h1>
-            <ProductGrid productos={products} />
+            <ProductGrid productos={products as Producto[]} />
         </div>
     );
 }

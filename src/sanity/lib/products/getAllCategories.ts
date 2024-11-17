@@ -1,17 +1,22 @@
 import { defineQuery } from "next-sanity"
 import { sanityFetch } from "../live";
+import { Category } from "../../../../sanity.types";
 
-export const getAllCategories= async () =>{
+export const getAllCategories = async (): Promise<Category[]> => {
     const ALL_CATEGORIES_QUERY = defineQuery(
-        `*[_type == "category" ] | order(name asc)`
+        `*[_type == "category"] {
+            _id,
+            _type,
+            title,
+            slug,
+            description
+        } | order(title asc)`
     );
-    
 
     try {
         const categories = await sanityFetch({
             query: ALL_CATEGORIES_QUERY,
         });
-        //retorna los datos o un array vacio
         return categories.data || [];
     } catch (error) {
         console.error("Error fetching categories:", error);

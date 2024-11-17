@@ -16,17 +16,17 @@ export interface OrderItem {
 
 export interface Order {
     _id: string;
-    numeroPedido: string;
-    customerName: string;
-    customerEmail: string;
-    precioTotal: number;
-    moneda: string;
-    descuentoCantidad: number;
-    estado: 'pendiente' | 'pagado' | 'enviado' | 'entregado' | 'cancelado';
-    fechaPedido: string;
-    productos: OrderItem[];
+    numeroPedido: string | null;
+    customerName: string | null;
+    customerEmail: string | null;
+    precioTotal: number | null;
+    moneda: string | null;
+    descuentoCantidad: number | null;
+    estado: 'pendiente' | 'pagado' | 'enviado' | 'entregado' | 'cancelado' | null;
+    fechaPedido: string | null;
+    productos: OrderItem[] | null;
     stripeCheckoutSessionId?: string;
-    stripeCustomerId: string;
-    stripePaymentIntentId: string;
-    clerkUserId: string;
+    stripeCustomerId?: string;
+    stripePaymentIntentId?: string;
+    clerkUserId?: string;
 } 

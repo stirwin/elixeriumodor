@@ -1,9 +1,7 @@
 import { defineQuery } from "next-sanity";
 import { sanityFetch } from "../live";
 
-
 export async function getMyOrders(userId: string) {
-
     const MI_ORDERS_QUERY = defineQuery(`
     *[_type == "pedido" && clerkUserId == $userId] | order(fechaPedido desc) {
         _id,
@@ -15,6 +13,10 @@ export async function getMyOrders(userId: string) {
         descuentoCantidad,
         estado,
         fechaPedido,
+        stripeCheckoutSessionId,
+        stripeCustomerId,
+        stripePaymentIntentId,
+        clerkUserId,
         "productos": productos[]{
             "id": _key,
             cantidad,
